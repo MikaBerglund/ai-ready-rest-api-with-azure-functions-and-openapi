@@ -57,8 +57,8 @@ public class InvestmentCalculatorFunctions
         // Calculate monthly interest rate from annual rate
         double monthlyRate = request.AnnualInterestRate / 12;
 
-        // Calculate future value using the formula for future value of an ordinary annuity
-        // Since we're investing at the beginning of each month, we use annuity due formula
+        // Calculate future value using the annuity due formula
+        // (investments at the beginning of each month)
         // FV = PMT × [((1 + r)^n - 1) / r] × (1 + r)
         // Where: PMT = monthly payment, r = monthly interest rate, n = number of months
         
@@ -70,10 +70,11 @@ public class InvestmentCalculatorFunctions
         }
         else
         {
-            // Future value of annuity due (payments at beginning of period)
-            futureValue = request.MonthlyInvestment * 
-                         (((Math.Pow(1 + monthlyRate, request.NumberOfMonths) - 1) / monthlyRate) * 
-                          (1 + monthlyRate));
+            // Calculate future value of annuity due (payments at beginning of period)
+            double growthFactor = Math.Pow(1 + monthlyRate, request.NumberOfMonths);
+            double annuityFactor = (growthFactor - 1) / monthlyRate;
+            double annuityDueFactor = annuityFactor * (1 + monthlyRate);
+            futureValue = request.MonthlyInvestment * annuityDueFactor;
         }
 
         double totalInvested = request.MonthlyInvestment * request.NumberOfMonths;
