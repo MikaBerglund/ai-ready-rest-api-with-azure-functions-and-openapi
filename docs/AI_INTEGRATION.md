@@ -247,6 +247,13 @@ curl -X PUT http://localhost:7093/api/products/1 \
     "category": "Electronics"
   }'
 
+# Partially update a product (only price)
+curl -X PATCH http://localhost:7093/api/products/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "price": 949.99
+  }'
+
 # Delete a product
 curl -X DELETE http://localhost:7093/api/products/1
 
@@ -271,6 +278,17 @@ $body = @{
 Invoke-RestMethod -Uri http://localhost:7093/api/products `
     -Method Post `
     -Body $body `
+    -ContentType "application/json"
+
+# Partially update a product (only update description and price)
+$patchBody = @{
+    description = "Updated 10 inch tablet with stylus"
+    price = 349.99
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri http://localhost:7093/api/products/1 `
+    -Method Patch `
+    -Body $patchBody `
     -ContentType "application/json"
 ```
 

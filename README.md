@@ -31,6 +31,7 @@ The application provides the following endpoints:
 - `GET /api/products/{id}` - Get a product by ID
 - `POST /api/products` - Create a new product
 - `PUT /api/products/{id}` - Update an existing product
+- `PATCH /api/products/{id}` - Partially update an existing product
 - `DELETE /api/products/{id}` - Delete a product
 - `GET /api/products/search?category={category}` - Search products by category
 

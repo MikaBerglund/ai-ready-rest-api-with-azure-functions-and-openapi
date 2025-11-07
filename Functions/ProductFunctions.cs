@@ -24,7 +24,7 @@ public class ProductFunctions
     /// <summary>
     /// Get all products.
     /// </summary>
-    [Function("GetProducts")]
+    [Function(nameof(GetProducts))]
     [OpenApiOperation(operationId: "GetProducts", tags: new[] { "Products" }, Summary = "Get all products", Description = "Retrieves a list of all available products.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Product>), Description = "List of products")]
     public async Task<HttpResponseData> GetProducts(
@@ -39,7 +39,7 @@ public class ProductFunctions
     /// <summary>
     /// Get a product by ID.
     /// </summary>
-    [Function("GetProductById")]
+    [Function(nameof(GetProductById))]
     [OpenApiOperation(operationId: "GetProductById", tags: new[] { "Products" }, Summary = "Get product by ID", Description = "Retrieves a specific product by its unique identifier.")]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The product ID")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Product), Description = "The requested product")]
@@ -64,7 +64,7 @@ public class ProductFunctions
     /// <summary>
     /// Create a new product.
     /// </summary>
-    [Function("CreateProduct")]
+    [Function(nameof(CreateProduct))]
     [OpenApiOperation(operationId: "CreateProduct", tags: new[] { "Products" }, Summary = "Create a new product", Description = "Creates a new product in the catalog.")]
     [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Product), Required = true, Description = "The product to create")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(Product), Description = "The created product")]
@@ -96,7 +96,7 @@ public class ProductFunctions
     /// <summary>
     /// Update an existing product.
     /// </summary>
-    [Function("UpdateProduct")]
+    [Function(nameof(UpdateProduct))]
     [OpenApiOperation(operationId: "UpdateProduct", tags: new[] { "Products" }, Summary = "Update a product", Description = "Updates an existing product by its ID.")]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The product ID")]
     [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Product), Required = true, Description = "The updated product data")]
@@ -134,9 +134,64 @@ public class ProductFunctions
     }
 
     /// <summary>
+    /// Partially update a product.
+    /// </summary>
+    [Function(nameof(PatchProduct))]
+    [OpenApiOperation(operationId: "PatchProduct", tags: new[] { "Products" }, Summary = "Partially update a product", Description = "Partially updates an existing product by its ID. Only provided fields will be updated.")]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The product ID")]
+    [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(ProductPatch), Required = true, Description = "The partial product data to update")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Product), Description = "The updated product")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Product not found")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid product data")]
+    public async Task<HttpResponseData> PatchProduct(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "products/{id}")] HttpRequestData req,
+        string id,
+        FunctionContext executionContext)
+    {
+        var existingProduct = Products.FirstOrDefault(p => p.Id == id);
+        
+        if (existingProduct == null)
+        {
+            return req.CreateResponse(HttpStatusCode.NotFound);
+        }
+
+        var patch = await req.ReadFromJsonAsync<ProductPatch>();
+        
+        if (patch == null)
+        {
+            return req.CreateResponse(HttpStatusCode.BadRequest);
+        }
+
+        // Apply partial updates only for properties that are provided
+        if (patch.Name != null)
+        {
+            existingProduct.Name = patch.Name;
+        }
+        
+        if (patch.Description != null)
+        {
+            existingProduct.Description = patch.Description;
+        }
+        
+        if (patch.Price.HasValue)
+        {
+            existingProduct.Price = patch.Price.Value;
+        }
+        
+        if (patch.Category != null)
+        {
+            existingProduct.Category = patch.Category;
+        }
+
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteAsJsonAsync(existingProduct);
+        return response;
+    }
+
+    /// <summary>
     /// Delete a product.
     /// </summary>
-    [Function("DeleteProduct")]
+    [Function(nameof(DeleteProduct))]
     [OpenApiOperation(operationId: "DeleteProduct", tags: new[] { "Products" }, Summary = "Delete a product", Description = "Deletes a product by its ID.")]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The product ID")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent, Description = "Product deleted successfully")]
@@ -160,7 +215,7 @@ public class ProductFunctions
     /// <summary>
     /// Search products by category.
     /// </summary>
-    [Function("SearchProductsByCategory")]
+    [Function(nameof(SearchProductsByCategory))]
     [OpenApiOperation(operationId: "SearchProductsByCategory", tags: new[] { "Products" }, Summary = "Search products by category", Description = "Searches for products in a specific category.")]
     [OpenApiParameter(name: "category", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The product category to search for")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Product>), Description = "List of products in the category")]
