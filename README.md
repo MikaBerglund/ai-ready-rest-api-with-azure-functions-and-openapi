@@ -38,9 +38,9 @@ The application provides the following endpoints:
 
 The OpenAPI documentation is automatically available at:
 
-- Swagger UI: `http://localhost:7071/api/swagger/ui`
-- OpenAPI JSON: `http://localhost:7071/api/openapi/v3.json`
-- OpenAPI YAML: `http://localhost:7071/api/openapi/v3.yaml`
+- Swagger UI: `http://localhost:7093/api/swagger/ui`
+- OpenAPI JSON: `http://localhost:7093/api/openapi/v3.json`
+- OpenAPI YAML: `http://localhost:7093/api/openapi/v3.yaml`
 
 ## Getting Started
 
@@ -75,7 +75,7 @@ The OpenAPI documentation is automatically available at:
 
 4. Open the Swagger UI in your browser:
    ```
-   http://localhost:7071/api/swagger/ui
+   http://localhost:7093/api/swagger/ui
    ```
 
 ## Using with AI Systems
@@ -84,7 +84,7 @@ The OpenAPI specification makes this API easy to integrate with AI systems:
 
 ### ChatGPT / Custom GPTs
 
-1. Navigate to `http://localhost:7071/api/openapi/v3.json`
+1. Navigate to `http://localhost:7093/api/openapi/v3.json`
 2. Copy the OpenAPI specification
 3. In ChatGPT, create a Custom GPT and provide the OpenAPI spec in the Actions section
 
@@ -102,7 +102,7 @@ var kernel = Kernel.CreateBuilder()
 // Import the API as a plugin
 await kernel.ImportPluginFromOpenApiAsync(
     "ProductsAPI",
-    new Uri("http://localhost:7071/api/openapi/v3.json"));
+    new Uri("http://localhost:7093/api/openapi/v3.json"));
 ```
 
 ## Development
