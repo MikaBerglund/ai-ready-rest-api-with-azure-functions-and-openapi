@@ -6,7 +6,7 @@ A sample application that demonstrates how to use Azure Functions (isolated work
 
 - **Azure Functions v4** with .NET 8.0 isolated worker model
 - **OpenAPI/Swagger documentation** automatically generated from code attributes
-- **RESTful API** with CRUD operations for product management
+- **RESTful API** with investment calculation endpoint
 - **AI-ready** endpoints with comprehensive OpenAPI annotations
 - **Visual Studio 2022** compatible
 
@@ -15,25 +15,50 @@ A sample application that demonstrates how to use Azure Functions (isolated work
 ```
 AIReadyRestApi/
 ├── Functions/
-│   └── ProductFunctions.cs    # HTTP-triggered functions with OpenAPI attributes
+│   └── InvestmentCalculatorFunctions.cs  # HTTP-triggered functions with OpenAPI attributes
 ├── Models/
-│   └── Product.cs              # Domain model with XML documentation
-├── Program.cs                  # Host configuration
-├── host.json                   # Functions runtime configuration
-└── local.settings.json         # Local development settings
+│   ├── InvestmentRequest.cs              # Investment calculation request model
+│   └── InvestmentResult.cs               # Investment calculation result model
+├── Program.cs                            # Host configuration
+├── host.json                             # Functions runtime configuration
+└── local.settings.json                   # Local development settings
 ```
 
 ## API Endpoints
 
-The application provides the following endpoints:
+The application provides the following endpoint:
 
-- `GET /api/products` - Get all products
-- `GET /api/products/{id}` - Get a product by ID
-- `POST /api/products` - Create a new product
-- `PUT /api/products/{id}` - Update an existing product
-- `PATCH /api/products/{id}` - Partially update an existing product
-- `DELETE /api/products/{id}` - Delete a product
-- `GET /api/products/search?category={category}` - Search products by category
+- `POST /api/investment/calculate` - Calculate investment returns
+
+### Investment Calculation Endpoint
+
+This endpoint calculates the future value of regular monthly investments with compound interest.
+
+**Request Body:**
+```json
+{
+  "monthlyInvestment": 100.0,
+  "numberOfMonths": 12,
+  "annualInterestRate": 0.10
+}
+```
+
+**Response:**
+```json
+{
+  "monthlyInvestment": 100.0,
+  "numberOfMonths": 12,
+  "annualInterestRate": 0.10,
+  "totalInvested": 1200.0,
+  "totalInterest": 67.03,
+  "finalValue": 1267.03
+}
+```
+
+The calculation assumes:
+- Investments are made at the beginning of each month
+- Interest is compounded monthly
+- Annual interest rate is expressed as a decimal (e.g., 0.1 for 10%)
 
 ## OpenAPI/Swagger Documentation
 
@@ -102,7 +127,7 @@ var kernel = Kernel.CreateBuilder()
 
 // Import the API as a plugin
 await kernel.ImportPluginFromOpenApiAsync(
-    "ProductsAPI",
+    "InvestmentAPI",
     new Uri("http://localhost:7093/api/openapi/v3.json"));
 ```
 
