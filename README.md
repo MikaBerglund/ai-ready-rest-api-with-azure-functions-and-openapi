@@ -1,6 +1,6 @@
 # AI-Ready REST API with Azure Functions and OpenAPI
 
-A sample application that demonstrates how to use Azure Functions (isolated worker model) with the OpenAPI extension to create a REST API that can easily be consumed by AI systems such as ChatGPT, Copilot, or Semantic Kernel.
+A sample application that demonstrates how to use Azure Functions (isolated worker model) with the OpenAPI extension to create a REST API that can easily be consumed by AI systems such as ChatGPT, Copilot, or Microsoft Agent Framework (MAF).
 
 ## Features
 
